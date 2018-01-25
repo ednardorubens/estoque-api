@@ -1,28 +1,42 @@
-const jsonResponse = (res, content) => {
+const _jsonResponse = (res, content) => {
   res.status(200);
   res.json(content);
 }
 
-module.exports = (produto) = {
+const _buscarProduto = (id) => {
+  return produtos.filter(produto => produto.id == id)[0];
+}
 
-  listar: (req, res) => {
-    jsonResponse(res, {'produtos': [
-      {
-        'id': '1',
-        'nome': 'produto1',
-      },
-      {
-        'id': '2',
-        'nome': 'produto2',
-      },
-    ]});
+let produtos = [
+  {
+    id: 1,
+    nome: 'produto1',
+  },
+  {
+    id: 2,
+    nome: 'produto2',
+  },
+]
+
+module.exports = {
+
+  listar(req, res) {
+    _jsonResponse(res, produtos);
   },
 
-  buscar: (req, res) => {
-    res.send('Busca de produtos');
+  buscar(req, res) {
+    _jsonResponse(res, _buscarProduto(req.params.id));
   },
 
-  remover: (req, res) => {
-    res.send('Remoção de produtos');
+  inserir(req, res) {
+    produtos.push({
+      id: 3,
+      nome: 'produto3',
+    });
+  },
+
+  remover(req, res) {
+    let produto = _buscarProduto(req.params.id);
+    res.send('Removendo ' + produto.nome);
   },
 }
