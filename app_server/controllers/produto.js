@@ -1,45 +1,40 @@
-const _jsonResponse = (res, content) => {
-  res.status(200);
-  res.json(content);
-}
+module.exports = (() => {
 
-const _buscarProduto = (id) => {
-  return produtos.filter(produto => produto.id == id)[0];
-}
+  let state = {
+    id: -1,
+    produtos: [],
+  }
 
-let produtos = [
-  {
-    id: 1,
-    nome: 'Produto 1',
-  },
-  {
-    id: 2,
-    nome: 'Produto 2',
-  },
-]
+  const _jsonResponse = (res, content) => {
+    res.status(200);
+    res.json(content);
+  };
 
-module.exports = {
+  const _buscarProduto = (id) => {
+    return state.produtos.filter(produto => produto.id == id)[0];
+  };
 
-  listar(req, res) {
-    _jsonResponse(res, produtos);
-  },
-  
-  buscar(req, res) {
-    _jsonResponse(res, _buscarProduto(req.params.id));
-  },
-  
-  inserir(req, res) {
-    let qtd = produtos.reduce((prev, current) => (prev.id > current.id ? prev : current).id, 0) + 1;
+  return {
+    listar: (req, res) => {
+      _jsonResponse(res, state.produtos);
+    },
     
-    produtos.push({
-      id: qtd,
-      nome: 'Produto ' + qtd,
-    });
-    _jsonResponse(res, produtos);
-  },
-  
-  remover(req, res) {
-    produtos = produtos.filter(produto => produto.id != req.params.id);
-    res.send('Produto Removido!');
-  },
-}
+    buscar: (req, res) => {
+      _jsonResponse(res, _buscarProduto(req.params.id));
+    },
+
+    inserir: (req, res) => {
+      state.produtos.push({
+        id: ++state.id,
+        nome: 'Produto ' + state.id,
+      });
+      _jsonResponse(res, state.produtos);
+    },
+
+    remover: (req, res) => {
+      state.produtos = state.produtos.filter(produto => produto.id != req.params.id);
+      res.send('Produto removido com sucesso!');
+    },
+  };
+
+})();
