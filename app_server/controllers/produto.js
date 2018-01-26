@@ -4,10 +4,10 @@ const _jsonResponse = (res, content) => {
 }
 
 const _buscarProduto = (id) => {
-  return produtos.filter(produto => produto.id == id)[0];
+  return _produtos.filter(produto => produto.id == id)[0];
 }
 
-let produtos = [
+let _produtos = [
   {
     id: 1,
     nome: 'produto1',
@@ -21,7 +21,7 @@ let produtos = [
 module.exports = {
 
   listar(req, res) {
-    _jsonResponse(res, produtos);
+    _jsonResponse(res, _produtos);
   },
 
   buscar(req, res) {
@@ -29,7 +29,7 @@ module.exports = {
   },
 
   inserir(req, res) {
-    produtos.push({
+    _produtos.push({
       id: 3,
       nome: 'produto3',
     });
