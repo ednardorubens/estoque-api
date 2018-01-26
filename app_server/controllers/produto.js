@@ -29,7 +29,7 @@ module.exports = {
   },
   
   inserir(req, res) {
-    let qtd = produtos.length + 1;
+    let qtd = produtos.reduce((prev, current) => (prev.id > current.id ? prev : current).id, 0) + 1;
     
     produtos.push({
       id: qtd,
