@@ -5,6 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var db = require('./app_server/models/db');
+
+var mlab = 'mongodb://ds117128.mlab.com:17128/cerejeiradb';
+// var atlas = 'mongodb://cluster0-shard-00-00-sutcb.mongodb.net:27017/cerejeiradb';
+var options = {user: 'cerejeira', pass: 'cerejeira@123'};
+
+db.connect(mlab, options);
+
 var routes = require('./app_server/routes');
 
 var app = express();
