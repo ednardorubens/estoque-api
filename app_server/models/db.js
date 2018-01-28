@@ -1,48 +1,24 @@
-var conn, mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 module.exports = (() => {
-    var connect = (uri, options) => {
-        conn = mongoose.createConnection(uri, options);
+    const connect = (uri, options) => {
+        const conn = mongoose.createConnection(uri, options)
+            .on('connected', () => console.log('Mongoose connected to ' + uri))
+            .on('error', (error) => console.log('Mongoose connection error: ' + error))
+            .on('disconnected', () => console.log('Mongoose disconnected of ' + uri));
         
-        conn.on('connected', () => {
-            console.log('Mongoose connected to ' + uri);
-        });
-        
-        conn.on('error', (error) => {
-            console.log('Mongoose connection error: ' + error);
-        });
-        
-        conn.on('disconnected', () => {
-            console.log('Mongoose disconnected of ' + uri);
-        });
-        
-        var gracefulShutdown = (msg, callback) => {
-            conn.close(() => {
-                console.log('Mongoose disconnected through ' + msg);
-                callback();
-            });
+        const gracefulShutdown = (msg) => {
+            console.log('Mongoose disconnected through ' + msg);
+            conn.close(() => process.exit(0));
         };
         
-        process.once('SIGUSR2', () => {
-            gracefulShutdown('nodemon restart', () => {
-                process.kill(process.pid, 'SIGUSR2');
-            });
-        });
-        
-        process.on('SIGINT', () => {
-            gracefulShutdown('app termination', () => {
-                process.exit(0);
-            });
-        });
-    
-        process.on('SIGTERM', () => {
-            gracefulShutdown('Heroku termination', () => {
-                process.exit(0);
-            });
-        });
+        process.on('SIGINT', () => gracefulShutdown('app termination'))
+            .on('SIGTERM', () => gracefulShutdown('heroku termination'));
     }
 
     return {
         connect: (uri, options) => connect(uri, options),
     };
 })();
+
+require('./locations');
