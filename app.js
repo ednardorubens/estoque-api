@@ -8,11 +8,11 @@ var bodyParser = require('body-parser');
 var db = require('./app_server/models/db');
 
 var mlab = 'mongodb://ds117128.mlab.com:17128/cerejeiradb';
-// var atlas = 'mongodb://cluster0-shard-00-00-sutcb.mongodb.net:27017,cluster0-shard-00-01-sutcb.mongodb.net:27017,cluster0-shard-00-02-sutcb.mongodb.net:27017/cerejeiradb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+var atlas = 'mongodb://cluster0-shard-00-00-sutcb.mongodb.net:27017,cluster0-shard-00-01-sutcb.mongodb.net:27017,cluster0-shard-00-02-sutcb.mongodb.net:27017/cerejeiradb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 var options = {user: 'cerejeira', pass: 'cerejeira@123'};
 
-db.connect(mlab, options);
-// db.connect(atlas, options);
+// db.connect(mlab, options);
+db.connect(atlas, options);
 
 var routes = require('./app_server/routes');
 

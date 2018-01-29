@@ -1,40 +1,45 @@
-module.exports = (() => {
+const Dao = require('../models/dao');
 
-  let state = {
-    id: -1,
-    produtos: [],
-  }
+module.exports = (() => {
+  const produtoDao = Dao('Produto');
 
   const _jsonResponse = (res, content) => {
     res.status(200);
     res.json(content);
   };
 
-  const _buscarProduto = (id) => {
-    return state.produtos.filter(produto => produto.id == id)[0];
+  const _listar = (res) => {
+    produtoDao.listar().exec((error, produtos) => {
+      _jsonResponse(res, produtos);
+    });
   };
 
-  return {
-    listar: (req, res) => {
-      _jsonResponse(res, state.produtos);
-    },
-    
-    buscar: (req, res) => {
-      _jsonResponse(res, _buscarProduto(req.params.id));
-    },
+  const _buscar = (req, res) => {
+    res.send('Buscando id' + req.param.id);
+  };
 
-    inserir: (req, res) => {
-      state.produtos.push({
-        id: ++state.id,
-        nome: 'Produto ' + state.id,
+  const _inserir = (req, res) => {
+    if (req.query.nome && req.query.sigla) {
+      produtoDao.inserir({
+        nome: req.query.nome,
+        sigla: req.query.sigla,
+      }, (status) => {
+        res.send(status);
       });
-      _jsonResponse(res, state.produtos);
-    },
+    } else {
+      res.send('Parâmetros(' + JSON.stringify(req.query) + ') incorretos');
+    }
+  }
 
-    remover: (req, res) => {
-      state.produtos = state.produtos.filter(produto => produto.id != req.params.id);
-      res.send('Produto removido com sucesso!');
-    },
+  const _remover = (req, res) => {
+    res.send('Produto removido com sucesso!');
+  }
+
+  return {
+    listar:  (req, res) => _listar(res),
+    buscar:  (req, res) => _buscar(req, res),
+    inserir: (req, res) => _inserir(req, res),
+    remover: (req, res) => _remover(req, res),
   };
 
 })();

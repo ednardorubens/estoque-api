@@ -1,43 +1,45 @@
-var locations = require('../models/locations')
+const Dao = require('../models/dao');
 
 module.exports = (() => {
-
-  let state = {
-    id: -1,
-    unidades: [],
-  }
+  const unidadeDao = Dao('Unidade');
 
   const _jsonResponse = (res, content) => {
     res.status(200);
     res.json(content);
   };
 
-  const _buscarUnidade = (id) => {
-    return state.unidades.filter(unidade => unidade.id == id)[0];
+  const _listar = (res) => {
+    unidadeDao.listar().exec((error, unidades) => {
+      _jsonResponse(res, unidades);
+    });
   };
 
-  return {
-    listar: (req, res) => {
-      locations.criarUnidade();
-      _jsonResponse(res, state.unidades);
-    },
-    
-    buscar: (req, res) => {
-      _jsonResponse(res, _buscarUnidade(req.params.id));
-    },
+  const _buscar = (req, res) => {
+    res.send('Buscando id: ' + req.params['id']);
+  };
 
-    inserir: (req, res) => {
-      state.unidades.push({
-        id: ++state.id,
-        nome: 'Unidade ' + state.id,
+  const _inserir = (req, res) => {
+    if (req.query.nome && req.query.sigla) {
+      unidadeDao.inserir({
+        nome: req.query.nome,
+        sigla: req.query.sigla,
+      }, (status) => {
+        res.send(status);
       });
-      _jsonResponse(res, state.unidades);
-    },
+    } else {
+      res.send('Parâmetros(' + JSON.stringify(req.query) + ') incorretos');
+    }
+  }
 
-    remover: (req, res) => {
-      state.unidades = state.unidades.filter(unidade => unidade.id != req.params.id);
-      res.send('Unidade removido com sucesso!');
-    },
+  const _remover = (req, res) => {
+    res.send('Unidade removido com sucesso!');
+  }
+
+  return {
+    listar:  (req, res) => _listar(res),
+    buscar:  (req, res) => _buscar(req, res),
+    inserir: (req, res) => _inserir(req, res),
+    remover: (req, res) => _remover(req, res),
   };
 
 })();
