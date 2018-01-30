@@ -24,25 +24,20 @@ module.exports = (tipo) => {
     return status;
   };
 
+  const _regCallback = (callback, operation, operated, error) => {
+    if (callback) {
+      callback(_regCall(operation, operated, error));
+    } else {
+      console.log(_regCall(operation, operated, error));
+    }
+  }
+
   return (() => {
     return {
-      inserir: (dados, callback) => {
-        const model = new Model(dados);
-        model.save((error) => {
-          if (callback) {
-            callback(_regCall('criar', 'criado', error));
-          }
-        });
-      },
-
-      listar: () => Model.find(),
-
-      remover: (dados, callback) => {
-        let removed = Model.remove(dados, (error) => _regCall('remover', 'removido', error));
-        if (removed && callback) {
-          removed.then(callback);
-        }
-      },
+      listar : () => Model.find(),
+      buscar : (id) => Model.findById(id),
+      inserir: (dados, callback) => new Model(dados).save((error) => _regCallback(callback, 'criar', 'criado', error)),
+      remover: (id, callback) => Model.findByIdAndRemove(id, {}, (error) => _regCallback(callback, 'remover', 'removido', error)),
     }
   })();
-};
+}
