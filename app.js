@@ -1,22 +1,54 @@
-var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
+var helmet = require('helmet');
+var express = require('express');
+var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
 
-var db = require('./app_server/models/db');
-
-var mlab = 'mongodb://ds117128.mlab.com:17128/cerejeiradb';
-var atlas = 'mongodb://cluster0-shard-00-00-sutcb.mongodb.net:27017,cluster0-shard-00-01-sutcb.mongodb.net:27017,cluster0-shard-00-02-sutcb.mongodb.net:27017/cerejeiradb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-var options = {user: 'cerejeira', pass: 'cerejeira@123'};
-
-// db.connect(mlab, options);
-db.connect(atlas, options);
-
+require('./app_server/models/db').connect();
 var routes = require('./app_server/routes');
 
 var app = express();
+
+app.use((req, res, next) => {
+  if (req.headers['origin']) {
+    if (req.headers['access-control-allow-headers']) {
+      if (req.headers['x-requested-with']) {
+        if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
+          res.removeHeader('x-powered-by');
+          res.sendStatus(403);
+          return;
+        }
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+      }
+    }
+    res.header('Access-Control-Allow-Origin', req.headers['origin']);
+    res.header('Access-Control-Allow-Credentials', true);
+    if (req.headers['access-control-request-method']) {
+      res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE');
+    }
+  }
+  next();
+});
+
+// Security
+app.use(helmet());
+
+// Session Security
+app.set('trust proxy', 1);
+app.use(session({
+  resave: true,
+  name: 'sessionId',
+  secret: '5up37_s3Cur3',
+  saveUninitialized: false,
+  cookie: {
+    path: 'estoque/api',
+    maxAge: 60 * 60 * 1000,
+    // domain: 'localhost',
+  }
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'app_server', 'views'));
@@ -33,14 +65,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -1,18 +1,12 @@
-module.exports = (() => {
-  const Controller = require('./controller');
-  const unidadeController = Controller('Unidade', (req) => {
-    if (req.query.nome && req.query.sigla) {
-      return {
-        nome: req.query.nome,
-        sigla: req.query.sigla,
-      }
-    }
-  });
+const Controller = require('./controller');
 
-  return {
-    listar:  (req, res) => unidadeController.listar(res),
-    buscar:  (req, res) => unidadeController.buscar(req, res),
-    inserir: (req, res) => unidadeController.inserir(req, res),
-    remover: (req, res) => unidadeController.remover(req, res),
+module.exports = Controller('Unidade', (req) => {
+  const unidade = {};
+  if (req.body.nome) {
+    unidade.nome = req.body.nome;
   }
-})()
+  if (req.body.sigla) {
+    unidade.sigla = req.body.sigla;
+  }
+  return unidade;
+});

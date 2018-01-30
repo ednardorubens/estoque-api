@@ -1,21 +1,17 @@
 const Dao = require('../models/dao');
 
-module.exports = (tipo, montar) => {
+module.exports = (tipo, montarObjeto, buscarAntes) => {
   const dao = Dao(tipo);
 
-  const _jsonResponse = (res, content) => {
-    res.status(200).json(content);
-  };
-
   const _listar = (res) => {
-    dao.listar().exec((error, itens) => _jsonResponse(res, itens));
+    dao.listar().exec((error, itens) => res.status(200).json(itens));
   };
   
   const _buscar = (req, res) => {
     if (req.params['id']) {
       dao.buscar(req.params['id']).exec((error, item) => {
         if (item) {
-          _jsonResponse(res, item);
+          res.status(200).json(item);
         } else {
           res.send(tipo + ' não encontrado(a)!');
         }
@@ -25,22 +21,39 @@ module.exports = (tipo, montar) => {
 
   const _inserir = (req, res) => {
     if (req) {
-      dao.inserir(montar(req), (status) => res.send(status));
+      if (buscarAntes) {
+        buscarAntes(req, () => {dao.inserir(montarObjeto(req), (status) => res.send(status))});
+      } else {
+        dao.inserir(montarObjeto(req), (status) => res.send(status));
+      }
     } else {
-      res.send('Parâmetros(' + JSON.stringify(req.query) + ') incorretos');
+      res.send('Parâmetros(' + JSON.stringify(req.params) + ') incorretos');
     }
   }
+  
+  const _atualizar = (req, res) => {
+    if (req && req.params['id']) {
+      if (buscarAntes) {
+        buscarAntes(req, () => {dao.atualizar(req.params['id'], montarObjeto(req), (status) => res.send(status))});
+      } else {
+        dao.atualizar(req.params['id'], montarObjeto(req), (status) => res.send(status));
+      }
+    } else {
+      res.send('Parâmetros(' + JSON.stringify(req.params) + ') incorretos');
+    }
+  };
 
   const _remover = (req, res) => {
-    res.send('Produto removido com sucesso!');
+    res.send(tipo + ' removido(a) com sucesso!');
   }
 
   return (() => {
     return {
-      listar : (res)      => _listar(res),
-      buscar : (req, res) => _buscar(req, res),
-      inserir: (req, res) => _inserir(req, res),
-      remover: (req, res) => _remover(req, res),
+      listar    : (req, res) => _listar(res),
+      buscar    : (req, res) => _buscar(req, res),
+      inserir   : (req, res) => _inserir(req, res),
+      atualizar : (req, res) => _atualizar(req, res),
+      remover   : (req, res) => _remover(req, res),
     }
   })();
 }

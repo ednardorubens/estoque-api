@@ -10,12 +10,14 @@ router.get('/', ctrlMain.index);
 
 // Unidades Controller
 router.get('/unidades', ctrlUnidade.listar);
-router.get('/unidades/inserir', ctrlUnidade.inserir);
-router.get('/unidades/buscar/:id', ctrlUnidade.buscar);
-router.get('/unidades/remover/:id', ctrlUnidade.remover);
+router.post('/unidades', ctrlUnidade.inserir);
+router.get('/unidades/:id', ctrlUnidade.buscar);
+router.put('/unidades/:id', ctrlUnidade.atualizar);
+router.delete('/unidades/:id', ctrlUnidade.remover);
 
 // Produtos Controller
 router.get('/produtos', ctrlProduto.listar);
-router.get('/produtos/inserir', ctrlProduto.inserir);
-router.get('/produtos/buscar/:id', ctrlProduto.buscar);
-router.get('/produtos/remover/:id', ctrlProduto.remover);
+router.post('/produtos', ctrlProduto.inserir);
+router.get('/produtos/:id', ctrlProduto.buscar);
+router.put('/produtos/:id', ctrlProduto.atualizar);
+router.delete('/produtos/:id', ctrlProduto.remover);
