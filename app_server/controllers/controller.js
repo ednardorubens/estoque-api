@@ -14,7 +14,9 @@ module.exports = (tipo, montar) => {
   const _buscar = (req, res) => {
     if (req.params['id']) {
       dao.buscar(req.params['id']).exec((error, item) => {
-        if (!item) {
+        if (item) {
+          _jsonResponse(res, item);
+        } else {
           res.send(tipo + ' não encontrado(a)!');
         }
       });

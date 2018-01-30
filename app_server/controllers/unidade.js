@@ -1,7 +1,6 @@
-const Controller = require('./controller');
-
 module.exports = (() => {
-  const controller = Controller('Unidade', (req) => {
+  const Controller = require('./controller');
+  const unidadeController = Controller('Unidade', (req) => {
     if (req.query.nome && req.query.sigla) {
       return {
         nome: req.query.nome,
@@ -11,9 +10,9 @@ module.exports = (() => {
   });
 
   return {
-    listar:  (req, res) => controller.listar(res),
-    buscar:  (req, res) => controller.buscar(req, res),
-    inserir: (req, res) => controller.inserir(req, res),
-    remover: (req, res) => controller.remover(req, res),
+    listar:  (req, res) => unidadeController.listar(res),
+    buscar:  (req, res) => unidadeController.buscar(req, res),
+    inserir: (req, res) => unidadeController.inserir(req, res),
+    remover: (req, res) => unidadeController.remover(req, res),
   }
 })()
