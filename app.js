@@ -9,29 +9,11 @@ var cookieParser = require('cookie-parser');
 
 require('./app_server/models/db').connect();
 var routes = require('./app_server/routes');
+var cors = require('./app_server/filters/cors');
 
 var app = express();
 
-app.use((req, res, next) => {
-  if (req.headers['origin']) {
-    if (req.headers['access-control-allow-headers']) {
-      if (req.headers['x-requested-with']) {
-        if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-          res.removeHeader('x-powered-by');
-          res.sendStatus(403);
-          return;
-        }
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-      }
-    }
-    res.header('Access-Control-Allow-Origin', req.headers['origin']);
-    res.header('Access-Control-Allow-Credentials', true);
-    if (req.headers['access-control-request-method']) {
-      res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE');
-    }
-  }
-  next();
-});
+app.use(cors);
 
 // Security
 app.use(helmet());
@@ -63,23 +45,5 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
 module.exports = app;
