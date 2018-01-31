@@ -57,7 +57,11 @@ const format = (tokens, req, res) => {
     : ms >= 1000 ? 34 // blue
     : 32 // green
 
+<<<<<<< HEAD
   var fn = logger.compile('\x1b[42m\x1b[30m[:method]\x1b[0m \x1b[34m:url \x1b[' + colorStatus + 'm:status \x1b[35m:res[content-length] \x1b[' + colorResponseTime + 'm:response-time ms \x1b[37m[:date :remote-user :remote-addr]\x1b[0m');
+=======
+  var fn = logger.compile('\x1b[42m\x1b[30m[:method]\x1b[0m \x1b[35m:url \x1b[' + colorStatus + 'm:status \x1b[35m:res[content-length] \x1b[' + colorResponseTime + 'm:response-time ms \x1b[37m[:date :remote-user :remote-addr]\x1b[0m');
+>>>>>>> 9f06decc698391d2f5ce17a8df0c77a280972afe
   
   return fn(tokens, req, res);
 };
