@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-module.exports = (tipo) => {
+module.exports = (() => (tipo, masc = true) => {
   const Model = mongoose.model(tipo);
   
-  const _regCall = (operation, operated, error) => {
+  const _regCall = (operation, error) => {
     let erro = '';
     if (error) {
-      erro = 'Ocorreu um erro ao tentar ' + operation + ' um(a) ' + tipo;
+      erro = 'Ocorreu um erro ao tentar ' + operation + ' um' + (masc ? '' : 'a') + ' ' + tipo;
       const name = error.name;
       if (name === 'BulkWriteError' || name === 'MongoError') {
         const message = error.message;
@@ -16,38 +16,38 @@ module.exports = (tipo) => {
 
           let valor = message.substr(message.indexOf('dup key: { : "') + 14);
           valor = valor.substr(0, valor.indexOf('"'));
-          erro += ", pois já existe um(a) " + tipo + " com o " + campo + " '" + valor + "'";
+          erro += ", pois já existe um" + (masc ? "" : "a") + " " + tipo + " com o " + campo + " '" + valor + "'.";
         }
-      } else if (name === 'ValidationError') {
+      } else if (name === 'ValidationError' || name === 'CastError') {
         let message = '' + error;
         message = message.replace(new RegExp("(\\w)*: ", "g"), "");
+        message = message.replace(new RegExp("Cast to ObjectI[d|D] failed for value", "g"), "Falha na conversão do valor");
         message = message.replace(new RegExp("Cast to Number failed for value", "g"), "Falha na conversão do número");
         message = message.replace(new RegExp("Cast to Date failed for value", "g"), "Falha na conversão da data");
         message = message.replace(new RegExp("at path", "g"), "para o campo");
-        erro += ' (' + message + ')';
+        message = message.replace(new RegExp("for model", "g"), "do objeto");
+        message = message.replace(new RegExp("\"", "g"), "'");
+        erro += ' (' + message + ').';
       } else {
-        console.log(error);
+        erro = error;
       }
-      erro += '.';
     }
     return erro;
   };
 
-  const _regCallback = (callback, operation, operated, error, itens) => {
+  const _regCallback = (callback, operation, error, itens) => {
     if (callback) {
-      callback(_regCall(operation, operated, error), itens);
+      callback(_regCall(operation, error), itens);
     } else {
-      console.log(_regCall(operation, operated, error));
+      console.log(_regCall(operation, error));
     }
   }
 
-  return (() => {
-    return {
-      listar    : () => Model.find(),
-      buscar    : (id) => Model.findById(id),
-      inserir   : (dados, callback) => Model.create(dados, (error, itens) => _regCallback(callback, 'criar', 'criado', error, itens)),
-      atualizar : (id, dados, callback) => Model.findByIdAndUpdate(id, dados, (error, itens) => _regCallback(callback, 'atualizar', 'atualizado', error, itens)),
-      remover   : (id, callback) => Model.findByIdAndRemove(id, (error) => _regCallback(callback, 'remover', 'removido', error)),
-    }
-  })();
-}
+  return {
+    listar    : (callback) => Model.find((error, itens) => _regCallback(callback, 'listar', error, itens)),
+    buscar    : (id, callback) => Model.findById(id, (error, item) => _regCallback(callback, 'buscar', error, item)),
+    inserir   : (item, callback) => Model.create(item, (error, itens) => _regCallback(callback, 'criar', error, itens)),
+    atualizar : (id, dados, callback) => Model.findByIdAndUpdate(id, dados, (error, item) => _regCallback(callback, 'atualizar', error, item)),
+    remover   : (id, callback) => Model.findByIdAndRemove(id, (error, item) => _regCallback(callback, 'remover', error, item)),
+  }
+})();
