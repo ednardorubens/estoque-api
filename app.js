@@ -41,7 +41,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session(sessionOptions));
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]'));
 
 app.use(bodyParser.json());
