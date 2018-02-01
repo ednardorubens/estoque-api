@@ -6,14 +6,14 @@ var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
+var RedisStore = require('connect-redis')(session);
 
+// Conectar no banco de dados antes de iniciar o Express
 require('./app_server/models/db').connect();
-var routes = require('./app_server/routes');
-var cors = require('./app_server/filters/cors');
 
 var app = express();
 
-app.use(cors);
+app.use(require('./app_server/filters/cors'));
 
 // Security
 app.use(helmet());
@@ -21,7 +21,7 @@ app.use(helmet());
 // Session Security
 app.set('trust proxy', 1);
 app.use(session({
-  resave: true,
+  resave: false,
   name: 'sessionId',
   secret: '5up37_s3Cur3',
   saveUninitialized: false,
@@ -29,14 +29,14 @@ app.use(session({
     path: 'estoque/api',
     maxAge: 60 * 60 * 1000,
     // domain: 'localhost',
-  }
+  },
+  store: new RedisStore({
+    logErrors: true,
+    pass: 'cerejeira@123',
+    url: '//redis-16681.c16.us-east-1-2.ec2.cloud.redislabs.com:16681',
+  }),
 }));
 
-// view engine setup
-app.set('views', path.join(__dirname, 'app_server', 'views'));
-app.set('view engine', 'pug');
-
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]'));
 
@@ -45,6 +45,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.use('/', require('./app_server/routes'));
 
 module.exports = app;

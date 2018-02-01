@@ -1,13 +1,13 @@
 const Dao = require('../models/dao');
 
 module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callback()) => {
-  const _dao = Dao(tipo, masc);
+  const _dao = Dao(tipo, masc), _masc = () => (masc ? 'o' : 'a');
 
   const _responderBusca = (res, erro, itens) => {
     if (erro) {
       res.status(404).json({'erro': erro});
     } else if (!itens) {
-      res.status(200).json({'mensagem': 'Nenhum ' + tipo + ' foi encontrad' + (masc ? 'o' : 'a') + '!'});
+      res.status(200).json({'mensagem': 'Nenhum ' + tipo + ' foi encontrad' + _masc() + '!'});
     } else {
       res.status(200).json(itens);
     }
@@ -19,22 +19,22 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
     } else if (item) {
       if (operacao === 'salvar') {
         res.status(201).location(req.path + '/' + item._id).json({
-          'mensagem': tipo + ' salv' + (masc ? 'o' : 'a') + ' com sucesso!',
+          'mensagem': tipo + ' salv' + _masc() + ' com sucesso!',
           'item': item,
         });
       } else if (operacao === 'atualizar') {
         res.status(200).json({
-          'mensagem': tipo + ' atualizad' + (masc ? 'o' : 'a') + ' com sucesso!',
+          'mensagem': tipo + ' atualizad' + _masc() + ' com sucesso!',
           'item': Object.assign(item, req.body),
         });
       } else if (operacao === 'remover') {
         res.status(200).json({
-          'mensagem': tipo + ' removid' + (masc ? 'o' : 'a') + ' com sucesso!',
+          'mensagem': tipo + ' removid' + _masc() + ' com sucesso!',
         });
       }
     } else {
       res.status(operacao === 'remover' ? 404 : 500)
-        .json({'erro': operacao === 'remover' ? tipo + ' não encontrad' + (masc ? 'o' : 'a') : 'Ocorreu um erro desconhecido'});
+        .json({'erro': operacao === 'remover' ? tipo + ' não encontrad' + _masc() : 'Ocorreu um erro desconhecido'});
     }
   }
 
