@@ -46,7 +46,6 @@ app.use(logger('[:method] :url :status :res[content-length] :response-time ms [:
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', require('./app_server/routes'));
 
