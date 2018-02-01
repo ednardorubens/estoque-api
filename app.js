@@ -20,7 +20,8 @@ app.use(helmet());
 
 // Session Security
 app.set('trust proxy', 1);
-app.use(session({
+
+const sessionOptions = {
   resave: false,
   name: 'sessionId',
   secret: '5up37_s3Cur3',
@@ -30,13 +31,16 @@ app.use(session({
     maxAge: 60 * 60 * 1000,
     // domain: 'localhost',
   },
-  store: new RedisStore({
+}
+if (process.env.NODE_ENV === 'production') {
+  sessionOptions.store = new RedisStore({
     logErrors: true,
-    pass: 'cerejeira@123',
-    url: '//redis-16681.c16.us-east-1-2.ec2.cloud.redislabs.com:16681',
-  }),
-}));
+    pass: process.env.REDIS_PASS,
+    url: process.env.REDIS_URL,
+  });
+}
 
+app.use(session(sessionOptions));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]'));
 

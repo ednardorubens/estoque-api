@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
-// const uri = 'mongodb://ds117128.mlab.com:17128/cerejeiradb';
-const uri = 'mongodb://cluster0-shard-00-00-sutcb.mongodb.net:27017,cluster0-shard-00-01-sutcb.mongodb.net:27017,cluster0-shard-00-02-sutcb.mongodb.net:27017/cerejeiradb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-const options = {user: 'cerejeira', pass: 'cerejeira@123'};
+const uri = process.env.MONGO_URL;
+const options = {user: process.env.MONGO_USER, pass: process.env.MONGO_PASS};
 
 module.exports = (() => {
   const connect = () => {
