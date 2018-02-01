@@ -35,8 +35,8 @@ const sessionOptions = {
 if (process.env.NODE_ENV === 'production') {
   sessionOptions.store = new RedisStore({
     logErrors: true,
-    pass: process.env.REDIS_PASS,
     url: process.env.REDIS_URL,
+    pass: process.env.REDIS_PASS,
   });
 }
 

@@ -38,7 +38,7 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
     }
   }
 
-  const _listar = (res, mensagem) => _dao.listar((erro, itens) => _responderBusca(res, erro, itens));
+  const _listar = (res) => _dao.listar((erro, itens) => _responderBusca(res, erro, itens));
   
   const _buscar = (req, res) => {
     if (req.params.id) {

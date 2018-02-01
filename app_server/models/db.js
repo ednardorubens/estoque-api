@@ -40,4 +40,4 @@ mongoose.Error.messages.String.match = "'{VALUE}' não é um valor válido para 
 mongoose.Error.messages.String.minlength = "O tamanho da palavra '{VALUE}' inserida no campo '{PATH}' é menor que o mínimo({MINLENGTH}) permitido";
 mongoose.Error.messages.String.maxlength = "O tamanho da palavra '{VALUE}' inserida no campo '{PATH}' é maior que o máximo({MAXLENGTH}) permitido";
 
-require('./produto');
+require('./mapping');
