@@ -1,5 +1,5 @@
 var path = require('path');
-var logger = require('morgan');
+var morgan = require('morgan');
 var helmet = require('helmet');
 var express = require('express');
 var favicon = require('serve-favicon');
@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var RedisStore = require('connect-redis')(session);
+var logger = require('./app_server/services/logger.js');
 
 // Conectar no banco de dados antes de iniciar o Express
 require('./app_server/models/db').connect();
@@ -41,7 +42,13 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session(sessionOptions));
-app.use(logger('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]'));
+app.use(morgan('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]', {
+  stream: {
+    write: function(mensagem){
+        logger.info(mensagem);
+    }
+  }
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
