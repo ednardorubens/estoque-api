@@ -1,3 +1,4 @@
+const logger = require('winston');
 const mongoose = require('mongoose');
 
 const uri = process.env.MONGO_URL;
@@ -8,12 +9,12 @@ module.exports = (() => {
     mongoose.connect(uri, options);
 
     mongoose.connection
-      .on('connected', () => console.log('Mongoose connected to ' + uri))
-      .on('error', (error) => console.log('Mongoose connection error: ' + error))
-      .on('disconnected', () => console.log('Mongoose disconnected of ' + uri));
+      .on('connected', () => logger.info('Mongoose connected to ' + uri))
+      .on('error', (error) => logger.info('Mongoose connection error: ' + error))
+      .on('disconnected', () => logger.info('Mongoose disconnected of ' + uri));
 
     const gracefulShutdown = (msg) => {
-      console.log('Mongoose disconnected through ' + msg);
+      logger.info('Mongoose disconnected through ' + msg);
       mongoose.connection.close(() => process.exit(0));
     };
     

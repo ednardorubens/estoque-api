@@ -2,15 +2,18 @@ var path = require('path');
 var morgan = require('morgan');
 var helmet = require('helmet');
 var express = require('express');
+const logger = require('winston');
 var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var db = require('./app_server/models/db');
 var cookieParser = require('cookie-parser');
 var RedisStore = require('connect-redis')(session);
-var logger = require('./app_server/services/logger.js');
+var loggerConf = require('./app_server/services/logger.js');
 
-// Conectar no banco de dados antes de iniciar o Express
-require('./app_server/models/db').connect();
+loggerConf.config();
+
+db.connect();
 
 var app = express();
 
@@ -34,6 +37,7 @@ const sessionOptions = {
   },
 }
 if (process.env.NODE_ENV === 'production') {
+  logger.info('Configurando o redis para armazenar sessões');
   sessionOptions.store = new RedisStore({
     logErrors: true,
     url: process.env.REDIS_URL,
@@ -42,14 +46,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session(sessionOptions));
-app.use(morgan('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]', {
-  stream: {
-    write: function(mensagem){
-        logger.info(mensagem);
-    }
-  }
-}));
-
+app.use(morgan('[:method] :url :status :res[content-length] :response-time ms [:date :remote-user :remote-addr]'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

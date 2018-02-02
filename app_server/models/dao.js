@@ -1,3 +1,4 @@
+const logger = require('winston');
 const mongoose = require('mongoose');
 
 module.exports = (() => (tipo, masc = true) => {
@@ -39,7 +40,7 @@ module.exports = (() => (tipo, masc = true) => {
     if (callback) {
       callback(_regCall(operation, error), itens);
     } else {
-      console.log(_regCall(operation, error));
+      logger.error(_regCall(operation, error));
     }
   }
 
