@@ -7,7 +7,9 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
     if (erro) {
       res.status(404).json({'erro': erro});
     } else if (!itens) {
-      res.status(200).json({'mensagem': 'Nenhum ' + tipo + ' foi encontrad' + _masc() + '!'});
+      res.status(200).json({
+        'mensagem': 'Nenhum ' + tipo + ' foi encontrad' + _masc() + '!'
+      });
     } else {
       res.status(200).json(itens);
     }
@@ -15,26 +17,38 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
   
   const _responderAtualizacao = (req, res, erro, item, operacao) => {
     if (erro) {
-      res.status(operacao === 'remover' ? 404 : 400).json({'erro': erro});
+      res.status(400).json({'erro': erro});
     } else if (item) {
       if (operacao === 'salvar') {
         res.status(201).location(req.path + '/' + item._id).json({
           'mensagem': tipo + ' salv' + _masc() + ' com sucesso!',
-          'item': item,
+          'item': item
         });
       } else if (operacao === 'atualizar') {
         res.status(200).json({
           'mensagem': tipo + ' atualizad' + _masc() + ' com sucesso!',
-          'item': Object.assign(item, req.body),
-        });
-      } else if (operacao === 'remover') {
-        res.status(200).json({
-          'mensagem': tipo + ' removid' + _masc() + ' com sucesso!',
+          'item': Object.assign(item, req.body)
         });
       }
+    } else if (operacao === 'atualizar') {
+      res.status(404).json({
+        'erro': tipo + ' não encontrad' + _masc() + '!'
+      });
+    }
+  }
+
+  const _responderRemocao = (req, res, erro, item) => {
+    console.log(erro);
+    if (erro) {
+      res.status(404).json({'erro': erro});
+    } else if (item) {
+      res.status(200).json({
+        'mensagem': tipo + ' removid' + _masc() + ' com sucesso!'
+      });
     } else {
-      res.status(operacao === 'remover' ? 404 : 500)
-        .json({'erro': operacao === 'remover' ? tipo + ' não encontrad' + _masc() : 'Ocorreu um erro desconhecido'});
+      res.status(404).json({
+        'erro': tipo + ' não encontrad' + _masc() + '!'
+      });
     }
   }
 
@@ -60,15 +74,19 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
   
   const _remover = (req, res) => {
     if (req && req.params.id && res) {
-      _dao.remover(req.params.id, (erro, item) => _responderAtualizacao(req, res, erro, item, 'remover'));
+      _dao.remover(req.params.id, (erro, item) => _responderRemocao(req, res, erro));
     }
   }
   
   return {
-    listar    : (req, res) => _listar(res),
-    buscar    : (req, res) => _buscar(req, res),
-    inserir   : (req, res) => _inserir(req, res),
-    atualizar : (req, res) => _atualizar(req, res),
-    remover   : (req, res) => _remover(req, res),
+    getDao                : () => _dao,
+    listar                : (req, res) => _listar(res),
+    buscar                : (req, res) => _buscar(req, res),
+    inserir               : (req, res) => _inserir(req, res),
+    atualizar             : (req, res) => _atualizar(req, res),
+    remover               : (req, res) => _remover(req, res),
+    responderBusca        : (res, erro, itens) => _responderBusca(res, erro, itens),
+    responderAtualizacao  : (req, res, erro, item) => _responderAtualizacao(req, res, erro, item),
+    responderRemocao      : (req, res, erro, item) => _responderRemocao(req, res, erro, item),
   }
 })();

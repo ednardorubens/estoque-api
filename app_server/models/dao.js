@@ -14,7 +14,7 @@ module.exports = (() => (tipo, masc = true) => {
         if (message.indexOf('duplicate key') != -1) {
           let campo = message.substr(message.indexOf('index: ') + 7);
           campo = campo.substr(0, campo.indexOf('_'));
-
+          
           let valor = message.substr(message.indexOf('dup key: { : "') + 14);
           valor = valor.substr(0, valor.indexOf('"'));
           erro += ", pois já existe um" + (masc ? "" : "a") + " " + tipo + " com o " + campo + " '" + valor + "'.";
@@ -35,7 +35,7 @@ module.exports = (() => (tipo, masc = true) => {
     }
     return erro;
   };
-
+  
   const _regCallback = (callback, operation, error, itens) => {
     if (callback) {
       callback(_regCall(operation, error), itens);
@@ -43,7 +43,7 @@ module.exports = (() => (tipo, masc = true) => {
       logger.error(_regCall(operation, error));
     }
   }
-
+  
   return {
     listar    : (callback) => Model.find((error, itens) => _regCallback(callback, 'listar', error, itens)),
     buscar    : (id, callback) => Model.findById(id, (error, item) => _regCallback(callback, 'buscar', error, item)),

@@ -8,6 +8,17 @@ module.exports = (() => {
     if (!fs.existsSync(logDir)){
       fs.mkdirSync(logDir);
     }
+
+    let exceptionHandlers = [new winston.transports.Console()]
+    if (env === 'production') {
+      exceptionHandlers = [new winston.transports.File({
+        maxFiles: 10,
+        colorize: false,
+        timestamp: false,
+        maxsize: 1048576,
+        filename: 'logs/exceptions.log',
+      })];
+    }
     
     winston.configure({
       transports: [
@@ -23,15 +34,7 @@ module.exports = (() => {
           filename: 'logs/errors.log',
         }),
       ],
-      exceptionHandlers: [
-        new winston.transports.File({
-          maxFiles: 10,
-          colorize: false,
-          timestamp: false,
-          maxsize: 1048576,
-          filename: 'logs/exceptions.log',
-        })
-      ]
+      exceptionHandlers: exceptionHandlers
     });
   };
 
