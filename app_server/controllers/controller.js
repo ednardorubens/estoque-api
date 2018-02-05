@@ -6,9 +6,9 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
   const _responderBusca = (res, erro, itens) => {
     if (erro) {
       res.status(404).json({'erro': erro});
-    } else if (!itens) {
+    } else if (!itens || itens.length === 0) {
       res.status(200).json({
-        'mensagem': 'Nenhum ' + tipo + ' foi encontrad' + _masc() + '!'
+        'mensagem': 'Nenhum' + _masc() + ' ' + tipo + ' foi encontrad' + _masc() + '!'
       });
     } else {
       res.status(200).json(itens);
@@ -37,8 +37,7 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
     }
   }
 
-  const _responderRemocao = (req, res, erro, item) => {
-    console.log(erro);
+  const _responderRemocao = (res, erro, item) => {
     if (erro) {
       res.status(404).json({'erro': erro});
     } else if (item) {

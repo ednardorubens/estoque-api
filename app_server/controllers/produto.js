@@ -15,12 +15,12 @@ module.exports  = (router) => {
   const controller = Controller('Produto', mapear);
 
   const _listar = (req, res) => controller.getDao().listar((erro, itens) =>
-    controller.responderBusca(res, erro, itens.map(produto => {
-      return { ...produto._doc, valor_fracionado: produto.valor_de_compra / produto.quantidade };
-    }))
-  );
+  controller.responderBusca(res, erro, itens.map(produto => {
+    return { ...produto._doc, valor_fracionado: produto.valor_de_compra / produto.quantidade };
+  }))
+);
 
-  router.get('/produtos', _listar);
+router.get('/produtos', _listar);
   router.post('/produtos', controller.inserir);
   router.get('/produtos/:id', controller.buscar);
   router.put('/produtos/:id', controller.atualizar);
