@@ -2,7 +2,7 @@ const logger = require('winston');
 const mongoose = require('mongoose');
 
 module.exports = (() => (tipo, masc = true) => {
-  const Model = mongoose.model(tipo);
+  const Tipo = mongoose.model(tipo);
   
   const _regCall = (operation, error) => {
     let erro = '';
@@ -45,10 +45,11 @@ module.exports = (() => (tipo, masc = true) => {
   }
   
   return {
-    listar    : (callback) => Model.find((error, itens) => _regCallback(callback, 'listar', error, itens)),
-    buscar    : (id, callback) => Model.findById(id, (error, item) => _regCallback(callback, 'buscar', error, item)),
-    inserir   : (item, callback) => Model.create(item, (error, itens) => _regCallback(callback, 'criar', error, itens)),
-    atualizar : (id, dados, callback) => Model.findByIdAndUpdate(id, dados, (error, item) => _regCallback(callback, 'atualizar', error, item)),
-    remover   : (id, callback) => Model.findByIdAndRemove(id, (error, item) => _regCallback(callback, 'remover', error, item)),
+    getTipo   : () => Tipo,
+    listar    : (callback) => Tipo.find((error, itens) => _regCallback(callback, 'listar', error, itens)),
+    buscar    : (id, callback) => Tipo.findById(id, (error, item) => _regCallback(callback, 'buscar', error, item)),
+    inserir   : (item, callback) => Tipo.create(item, (error, itens) => _regCallback(callback, 'criar', error, itens)),
+    atualizar : (id, dados, callback) => Tipo.findByIdAndUpdate(id, dados, (error, item) => _regCallback(callback, 'atualizar', error, item)),
+    remover   : (id, callback) => Tipo.findByIdAndRemove(id, (error, item) => _regCallback(callback, 'remover', error, item)),
   }
 })();

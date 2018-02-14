@@ -1,6 +1,7 @@
 const Dao = require('../models/dao');
 
-module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callback()) => {
+module.exports = (() => (tipo, masc = true, popular, mapear = (objeto, callback) => callback()) => {
+  
   const _dao = Dao(tipo, masc), _masc = () => (masc ? 'o' : 'a');
 
   const _responderBusca = (res, erro, itens) => {
@@ -51,7 +52,13 @@ module.exports = (() => (tipo, masc = true, mapear = (objeto, callback) => callb
     }
   }
 
-  const _listar = (res) => _dao.listar((erro, itens) => _responderBusca(res, erro, itens));
+  const _listar = (res) => {
+    if (popular) {
+      _dao.listar((erro, itens) => _responderBusca(res, erro, itens)).populate(popular);
+    } else {
+      _dao.listar((erro, itens) => _responderBusca(res, erro, itens));
+    }
+  }
   
   const _buscar = (req, res) => {
     if (req.params.id) {
