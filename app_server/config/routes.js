@@ -1,7 +1,7 @@
 const jwt = require('express-jwt');
 module.exports = router = require('express').Router();
 
-router.get('/', require('./controllers/main').index);
+router.get('/', require('../controllers/main').index);
 
 const auth = jwt({
   secret: process.env.JWT_SECRET,
@@ -10,7 +10,7 @@ const auth = jwt({
 
 const rotear = (nomes) => {
   nomes.forEach(nome => {
-    const controller = require('./controllers/' + nome);
+    const controller = require('../controllers/' + nome);
     router.get('/' + nome + 's', controller.listar);
     router.post('/' + nome + 's', auth, controller.inserir);
     router.get('/' + nome + 's/:id', auth, controller.buscar);
@@ -21,6 +21,8 @@ const rotear = (nomes) => {
 
 rotear(['produto', 'ficha']);
 
-const usuarioController = require('./controllers/usuario');
-router.post('/registrar', usuarioController.inserir);
+const usuarioController = require('../controllers/usuario');
+router.get('/usuarios', usuarioController.listar);
+router.post('/usuarios/registrar', usuarioController.inserir);
 router.post('/login', usuarioController.login);
+router.delete('/usuarios/:id', usuarioController.remover);

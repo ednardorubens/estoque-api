@@ -80,7 +80,7 @@ module.exports = (() => (tipo, masc = true, popular, mapear = (objeto, callback)
   
   const _remover = (req, res) => {
     if (req && req.params.id && res) {
-      _dao.remover(req.params.id, (erro, item) => _responderRemocao(req, res, erro));
+      _dao.remover(req.params.id, (erro, item) => _responderRemocao(res, erro, item));
     }
   }
   
@@ -93,6 +93,6 @@ module.exports = (() => (tipo, masc = true, popular, mapear = (objeto, callback)
     remover               : (req, res) => _remover(req, res),
     responderBusca        : (res, erro, itens) => _responderBusca(res, erro, itens),
     responderAtualizacao  : (req, res, erro, item) => _responderAtualizacao(req, res, erro, item),
-    responderRemocao      : (req, res, erro, item) => _responderRemocao(req, res, erro, item),
+    responderRemocao      : (req, res, erro, item) => _responderRemocao(res, erro, item),
   }
 })();

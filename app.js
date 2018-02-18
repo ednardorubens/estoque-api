@@ -33,6 +33,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/', require('./app_server/routes'));
+app.use('/', require('./app_server/config/routes'));
 
 module.exports = app;
