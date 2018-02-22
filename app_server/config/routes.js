@@ -23,6 +23,6 @@ rotear(['produto', 'ficha']);
 
 const usuarioController = require('../controllers/usuario');
 router.get('/usuarios', usuarioController.listar);
-router.post('/usuarios/registrar', usuarioController.inserir);
+router.post('/usuarios', usuarioController.inserir);
 router.post('/login', usuarioController.login);
 router.delete('/usuarios/:id', usuarioController.remover);
