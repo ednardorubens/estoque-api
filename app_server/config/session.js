@@ -1,4 +1,4 @@
-const logger = require('morgan');
+const logger = require('winston');
 
 module.exports = () => {
   const sessionOptions = {
