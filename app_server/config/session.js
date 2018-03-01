@@ -1,3 +1,5 @@
+const logger = require('morgan');
+
 module.exports = () => {
   const sessionOptions = {
     resave: false,
