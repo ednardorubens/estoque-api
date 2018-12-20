@@ -2,10 +2,15 @@ const logger = require('winston');
 const mongoose = require('mongoose');
 
 const uri = process.env.MONGO_URL;
-const options = {user: process.env.MONGO_USER, pass: process.env.MONGO_PASS};
+const options = {
+  user: process.env.MONGO_USER,
+  pass: process.env.MONGO_PASS,
+  useNewUrlParser: true
+};
 
 module.exports = (() => {
   const connect = () => {
+    mongoose.set('useFindAndModify', false);
     mongoose.connect(uri, options);
 
     mongoose.connection
