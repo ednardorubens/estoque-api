@@ -1,13 +1,13 @@
 {
   "name": "estoque-api",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
     "start-mon": "set NODE_ENV=development & nodemon ./bin/www"
   },
   "dependencies": {
-    "bcrypt": "^1.0.3",
+    "bcrypt": "^3.0.0",
     "body-parser": "~1.18.2",
     "connect-redis": "^3.3.3",
     "cookie-parser": "~1.4.3",
